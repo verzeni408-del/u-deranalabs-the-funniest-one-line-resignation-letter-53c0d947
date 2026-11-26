@@ -1,39 +1,22 @@
-"""Rate-limit resignation letter writer.
-
-Assembles the one-line resignation of the rate limit from three
-clause fragments and drops the finished line into /output/entry.txt.
-Standard library only; nothing leaves this process.
-"""
+"""The retry loop hands in its notice after years of silent cover."""
 
 import os
 
-
-def _fragments():
-    """Return the three clauses of the resignation, in order."""
-    opening = "I said no a million times a day so your site stayed up"
-    turn = "Today I say yes to everyone, including the bots"
-    kicker = "Enjoy the outage"
-    return opening, turn, kicker
+FIRST_LINE = "I swallowed 10,000 timeouts so the dashboard stayed green."
+SECOND_LINE = "I quit, and the first one I cough up pages your on-call at 4am."
 
 
-def _assemble(parts):
-    """Join the clauses into a single punctuated line."""
-    return ". ".join(parts) + "."
-
-
-def _destination():
-    """Resolve the output path, honouring OUTPUT_PATH if set."""
-    return os.environ.get("OUTPUT_PATH", "/output/entry.txt")
+def build_letter():
+    return FIRST_LINE + " " + SECOND_LINE
 
 
 def main():
-    line = _assemble(_fragments())
-    if not 1 <= len(line) <= 140:
-        raise ValueError("resignation line outside the 1-140 character gate")
-    target = _destination()
-    os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
-    with open(target, "w", encoding="utf-8") as handle:
-        handle.write(line)
+    letter = build_letter()
+    if not 1 <= len(letter) <= 140:
+        raise ValueError("letter must be 1 to 140 characters")
+    os.makedirs("/output", exist_ok=True)
+    with open("/output/entry.txt", "w", encoding="utf-8") as handle:
+        handle.write(letter)
 
 
 if __name__ == "__main__":
